@@ -1,0 +1,31 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: frontend
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`localhost:3000`)
+    kind: Rule
+    services:
+    - name: app
+      port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingressroutetls
+  namespace: frontend
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`localhost:3000`)
+    kind: Rule
+    services:
+    - name: app
+      port: 80
+  tls:
+    certResolver: myresolver

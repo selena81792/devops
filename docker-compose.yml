@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+
+  backend:
+    container_name: backend
+    build:
+      context: backend/app
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_USERNAME=user
+      - MONGO_PASSWORD=superpassword
+      - MONGO_DATABASE=database
+    volumes:
+      - ./backend/app/:/app/
+    ports:
+      - 8080:8080
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend/app
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_API_HOST=http://localhost:8080/
+    volumes:
+      - ./frontend/app/:/app/
+    ports:
+      - 3000:3000
+
+  mongo:
+    image: mongo:4.4.0
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=superpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - "mongodb_data_container:/data/db"
+
+volumes:
+    mongodb_data_container:

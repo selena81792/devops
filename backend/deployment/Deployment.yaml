@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: selena817/devops-back
+        imagePullPolicy: Always
+        env:
+          - name: MONGO_HOST
+            valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: url
+
+          - name: MONGO_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: username
+          - name: MONGO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: password
+          - name: MONGO_DATABASE
+            value: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  selector:
+    app: api
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
